@@ -1,6 +1,9 @@
-from flask import Flask, url_for, render_template
+from flask import Flask, url_for, render_template, redirect, request
+from loginform import *
 
 app = Flask(__name__)
+
+app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 
 @app.route('/training/<prof>')
@@ -8,6 +11,19 @@ def index(prof):
     return render_template('index.html', title='Заготовка', name=prof)
 
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    firstform = LoginForm()
+    secondform = LoginForm()
+    if firstform.validate_on_submit() and secondform.validate_on_submit():
+        print(secondform.validate_on_submit())
+        return redirect('/')
+    return render_template('login.html', title='Авторизация', form=firstform, form2=secondform)
+
+
+@app.route('/distribution')
+def distribution():
+    return render_template('distribution.html')
 @app.route('/')
 def base():
     return render_template('base.html', title='Заготовка')

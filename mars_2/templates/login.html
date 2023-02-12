@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1><img src="/static/img/MARS-2-7.png"
+     alt="здесь должна была быть картинка, но не нашлась">Аварийный Доступ</h1>
+<form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+        id астронавт<br>
+        {{ form.username(class="form-control") }}<br>
+        {% for error in form.username.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endfor %}
+    </p>
+    <p>
+        Пароль астронавта<br>
+        {{ form.password(class="form-control", type="password") }}<br>
+        {% for error in form.password.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endfor %}
+    </p>
+</form>
+<form2 action="" method="post" novalidate>
+    {{ form2.hidden_tag() }}
+    <p>
+        id астронавт<br>
+        {{ form2.username(class="form-control") }}<br>
+        {% for error in form2.username.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endfor %}
+    </p>
+    <p>
+        Пароль астронавта<br>
+        {{ form2.password(class="form-control", type="password") }}<br>
+        {% for error in form2.password.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endfor %}
+    </p>
+</form2>
+<p>{{ form2.submit(type="submit", class="btn btn-primary", value="Доступ") }}</p>
+{% endblock %}
