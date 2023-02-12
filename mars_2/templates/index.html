@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if 'инженер' in name  or 'строител' in name%}
+<h2 align="center">Инженерные тренажеры</h2>
+<img src="/static/img/MARS-2-1.png"
+     alt="здесь должна была быть картинка, но не нашлась">
+{% else %}
+<h2 align="center">Научные симуляторы</h2>
+<img src="/static/img/MARS-2-2.png"
+     alt="здесь должна была быть картинка, но не нашлась">
+{% endif %}
+{% endblock %}
