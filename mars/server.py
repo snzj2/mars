@@ -153,7 +153,7 @@ def result1(nickname, level, rating):
                    <h2>Результаты отбора</h2>
                    <h3>Прентендент на участие в миссии {nickname}:</h3>
                     <div class="alert alert-dark" role="alert">
-                      Поздравляем! Ваш рейтинг после {level} этапа отбора
+                      Поздравляем!! Ваш рейтинг после {level} этапа отбора
                     </div>
                     <div class="alert alert-light" role="alert">
                       составляет {rating}
