@@ -14,11 +14,14 @@ def index(prof):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     firstform = LoginForm()
-    secondform = LoginForm()
-    if firstform.validate_on_submit() and secondform.validate_on_submit():
-        print(secondform.validate_on_submit())
+    if firstform.validate_on_submit():
+        print(request.form)
+        print(request.form["username"])
+        print(request.form["password"])
+        print(request.form["username2"])
+        print(request.form["password2"])
         return redirect('/')
-    return render_template('login.html', title='Авторизация', form=firstform, form2=secondform)
+    return render_template('login.html', title='Авторизация', form=firstform)
 
 
 @app.route('/distribution')
