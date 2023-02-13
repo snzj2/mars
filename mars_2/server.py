@@ -26,7 +26,10 @@ def login():
 
 @app.route('/distribution')
 def distribution():
-    return render_template('distribution.html')
+    user_list = ['Руслан', 'Ридли скотт', 'Энди Уир', 'Кирилл']
+    return render_template('distribution.html', user_list=user_list)
+
+
 @app.route('/')
 def base():
     return render_template('base.html', title='Заготовка')
