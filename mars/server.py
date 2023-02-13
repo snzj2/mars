@@ -138,6 +138,34 @@ def form_sample():
         return "Форма отправлена"
 
 
+@app.route('/results/<nickname>/<int:level>/<float:rating>')
+def result1(nickname, level, rating):
+    n = promotion()
+    return  f'''<!doctype html>
+                <html lang="en">
+                  <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                    <link rel="stylesheet"
+                   href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+                   integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+                   crossorigin="anonymous">
+                   <h2>Результаты отбора</h2>
+                   <h3>Прентендент на участие в миссии {nickname}:</h3>
+                    <div class="alert alert-dark" role="alert">
+                      Поздравляем! Ваш рейтинг после {level} этапа отбора
+                    </div>
+                    <div class="alert alert-light" role="alert">
+                      составляет {rating}
+                    </div>
+                    <div class="alert alert-danger" role="alert">
+                      Желаем удачи!
+                    </div>
+                  </body>
+                </html>'''
+
+
+
 @app.route('/promotion_image')
 def promotion_image():
     n = promotion()
