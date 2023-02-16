@@ -12,3 +12,7 @@ h4 {
    color: #5e5e5e;
    padding: 20px;
 }
+body {
+   background: radial-gradient(ellipse at center, #FF0000, #FFA500);
+}
+
