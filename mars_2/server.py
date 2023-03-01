@@ -2,6 +2,9 @@ from flask import Flask, url_for, render_template, redirect, request
 from random import choice
 from loginform import *
 import json
+from data import db_session
+from data.users import User
+from data.jobs import Jobs
 
 
 app = Flask(__name__)
@@ -43,7 +46,10 @@ def distribution():
 
 @app.route('/')
 def base():
-    return render_template('base.html', title='Заготовка')
+    db_session.global_init("db/mars_explorer.db")
+    db_sess = db_session.create_session()
+    news = db_sess.query(Jobs).all()
+    return render_template('spisook.html', news=news)
 
 
 @app.route('/answer')
