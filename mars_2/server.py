@@ -1,21 +1,30 @@
 from flask import Flask, url_for, render_template, redirect, request
 from random import choice
-from loginform import *
+from forms import loginform
+from forms import jobform
 import json
 from data import db_session
 from data.users import User
 from data.jobs import Jobs
 from forms.user import RegisterForm
-
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 
 @app.route('/training/<prof>')
 def index(prof):
     return render_template('index.html', title='Заготовка', name=prof)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    db_sess = db_session.create_session()
+    return db_sess.query(User).get(user_id)
 
 
 @app.route('/member')
@@ -26,23 +35,57 @@ def member():
 
     return render_template('member.html', name=k["name"], photo=k["photo"], work=", ".join(sorted(k["work"])))
 
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    firstform = LoginForm()
-    if firstform.validate_on_submit():
-        print(request.form)
-        print(request.form["username"])
-        print(request.form["password"])
-        print(request.form["username2"])
-        print(request.form["password2"])
-        return redirect('/')
-    return render_template('login.html', title='Авторизация', form=firstform)
+    form = loginform.LoginForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.email == form.email.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            return redirect("/")
+        return render_template('login.html',
+                               message="Неправильный логин или пароль",
+                               form=form)
+    return render_template('login.html', title='Авторизация', form=form)
 
 
 @app.route('/distribution')
 def distribution():
     user_list = ['Руслан', 'Ридли скотт', 'Энди Уир', 'Кирилл']
     return render_template('distribution.html', user_list=user_list)
+
+
+@app.route('/job', methods=['GET', 'POST'])
+@login_required
+def add_news():
+    form = jobform.JobForm()
+    db_session.global_init("db/mars_explorer.db")
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        job = Jobs()
+
+        job.team_leader = form.teamlead_id.data
+        job.job = form.job.data
+        job.work_size = form.word_size.data
+        job.collaborators = form.collaborators.data
+        job.is_finished = form.is_finished.data
+
+        current_user.jobs.append(job)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('job.html', title='Добавление работы',
+                           form=form)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
@@ -67,7 +110,7 @@ def reqister():
             name=form.name.data,
             email=form.email.data,
         )
-        print(form.password.data)
+
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
@@ -79,40 +122,10 @@ def reqister():
 def base():
     db_session.global_init("db/mars_explorer.db")
     db_sess = db_session.create_session()
-    news = db_sess.query(Jobs).all()
-    return render_template('spisook.html', news=news)
 
+    job = db_sess.query(Jobs).all()
 
-@app.route('/answer')
-@app.route('/auto_answer')
-def answer():
-    slovar = {
-        "title": "asd",
-        "surname": "Watny",
-        "name": "Mark",
-        "education": "Выше среднего",
-        "profession": "штурман марсохода",
-        "sex": "male",
-        "motivation": "Всегда мечтал застрять на Марсе",
-        "ready": "True",
-    }
-    return render_template('answer.html', **slovar)
-
-
-@app.route('/list_prof/<list>')
-def spisok(list):
-    k = ["инженер-исследователь", "пилот",
-         "строитель", "экзобиолого", "врач",
-         "инженер по терраформрованию",
-         "климатолог", "специалист по радиационной защите",
-         "астролог", " гляциолог",
-         "инженер жизнеобеспечения",
-         "метеоролог",
-         "оператор марсохода",
-         "киберинженер",
-         "штурман",
-         "пилот дронов"]
-    return render_template('spisok.html', title='Заготовка', list=list, spisok=k)
+    return render_template('spisook.html', news=job)
 
 
 if __name__ == '__main__':
