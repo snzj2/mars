@@ -1,4 +1,4 @@
-from flask import Flask, url_for, render_template, redirect, request
+from flask import Flask, url_for, render_template, redirect, request, abort
 from random import choice
 from forms import loginform
 from forms import jobform
@@ -16,11 +16,58 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-@app.route('/training/<prof>')
-def index(prof):
-    return render_template('index.html', title='Заготовка', name=prof)
+@app.route('/job/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_job(id):
+    form = jobform.JobForm()
+    db_session.global_init("db/mars_explorer.db")
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        job = db_sess.query(Jobs).filter(Jobs.id == id,
+                                          Jobs.user == current_user
+                                          ).first()
+        if job:
+            form.teamlead_id.data = job.team_leader
+            form.job.data = job.job
+            form.word_size.data = job.work_size
+            form.collaborators.data = job.collaborators
+            form.is_finished.data = job.is_finished
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        job = db_sess.query(Jobs).filter(Jobs.id == id,
+                                          Jobs.user == current_user
+                                          ).first()
+        if job:
+            job.team_leader = form.teamlead_id.data
+            job.job = form.job.data
+            job.work_size = form.word_size.data
+            job.collaborators = form.collaborators.data
+            job.is_finished = form.is_finished.data
+            db_sess.commit()
+            return redirect('/')
+        else:
+            abort(404)
+    return render_template('job.html',
+                           title='Редактирование новости',
+                           form=form
+                           )
 
-
+@app.route('/job_delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def job_delete(id):
+    db_sess = db_session.create_session()
+    print(id)
+    news = db_sess.query(Jobs).filter(Jobs.id == id,
+                                      Jobs.user == current_user
+                                      ).first()
+    if news:
+        db_sess.delete(news)
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/')
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
