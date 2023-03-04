@@ -10,5 +10,5 @@ class JobForm(FlaskForm):
 
     word_size = StringField("Часы работ", validators=[DataRequired()])
     collaborators = StringField("Модули", validators=[DataRequired()])
-    is_finished = BooleanField("закончен?", validators=[DataRequired()])
+    is_finished = BooleanField("закончен?")
     submit = SubmitField('Отправить работу')

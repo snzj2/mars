@@ -13,8 +13,10 @@
             is not finished
             {% endif %}
         </td></tr>
-    {% if current_user.is_authenticated and current_user == item.user %}
+    {% if current_user.is_authenticated and (current_user == item.user  or current_user.id == 1
+    or current_user.id == item.team_leader) %}
     <div>
+
         <a href="/job/{{ item.id }}" class="btn btn-warning">
             Изменить
         </a>
