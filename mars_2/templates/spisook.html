@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 align="center">Записи в блоге</h1>
+<h1 align="center">Works log</h1>
 
 {% for item in news%}
 <table>
-
     <h2>Action #{{loop.index}}</h2>
     <tr><th>Title of activity</th><th>Team Leader</th><th>Deration</th><th>List of collabarators</th><th>Is finished</th></tr>
     <tr><td>{{item.job}}</td><td>{{item.user.surname}}</td><td>{{item.work_size}} hours</td><td>{{item.collaborators}}</td>
