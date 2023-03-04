@@ -2,9 +2,11 @@
 
 {% block content %}
 <h1 align="center">Записи в блоге</h1>
+
 {% for item in news%}
 <table>
-    <h2>Action #{{item.id}}</h2>
+
+    <h2>Action #{{loop.index}}</h2>
     <tr><th>Title of activity</th><th>Team Leader</th><th>Deration</th><th>List of collabarators</th><th>Is finished</th></tr>
     <tr><td>{{item.job}}</td><td>{{item.user.surname}}</td><td>{{item.work_size}} hours</td><td>{{item.collaborators}}</td>
         <td>{% if item.is_finished %}
@@ -16,7 +18,6 @@
     {% if current_user.is_authenticated and (current_user == item.user  or current_user.id == 1
     or current_user.id == item.team_leader) %}
     <div>
-
         <a href="/job/{{ item.id }}" class="btn btn-warning">
             Изменить
         </a>

@@ -24,7 +24,8 @@ def edit_job(id):
     if request.method == "GET":
         db_sess = db_session.create_session()
         job = db_sess.query(Jobs).filter(Jobs.id == id,
-                                          Jobs.user == current_user
+                                          ((Jobs.user == current_user) | (current_user.id == 1)
+                                           | (current_user.id == Jobs.team_leader))
                                           ).first()
         if job:
             form.teamlead_id.data = job.team_leader
@@ -37,8 +38,9 @@ def edit_job(id):
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         job = db_sess.query(Jobs).filter(Jobs.id == id,
-                                          Jobs.user == current_user
-                                          ).first()
+                                         ((Jobs.user == current_user) | (current_user.id == 1)
+                                          | (current_user.id == Jobs.team_leader))
+                                         ).first()
         if job:
             job.team_leader = form.teamlead_id.data
             job.job = form.job.data
@@ -58,10 +60,11 @@ def edit_job(id):
 @login_required
 def job_delete(id):
     db_sess = db_session.create_session()
-    print(id)
     news = db_sess.query(Jobs).filter(Jobs.id == id,
-                                      Jobs.user == current_user
+                                      ((Jobs.user == current_user) | (current_user.id == 1)
+    | (current_user.id == Jobs.team_leader))
                                       ).first()
+    print(news)
     if news:
         db_sess.delete(news)
         db_sess.commit()
