@@ -8,8 +8,12 @@ from data.users import User
 from data.jobs import Jobs
 from forms.user import RegisterForm
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_restful import reqparse, abort, Api, Resource
+import users_resource
+
 
 app = Flask(__name__)
+api = Api(app)
 
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
@@ -21,6 +25,11 @@ def main():
     app.register_blueprint(jobs_api.blueprint)
 
     app.run()
+
+api.add_resource(users_resource.UsersListResource, '/api/v2/users')
+
+
+api.add_resource(users_resource.UsersResource, '/api/v2/users/<int:user_id>')
 
 @app.errorhandler(404)
 def not_found(error):
